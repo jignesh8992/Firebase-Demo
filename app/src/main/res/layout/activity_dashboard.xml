@@ -1,0 +1,158 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:focusable="true"
+    android:focusableInTouchMode="true"
+    android:padding="@dimen/_10sdp"
+    tools:context=".activity.DashboardActivity">
+
+
+    <TextView
+        android:id="@+id/tv_hello"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/hello_comma"
+        android:textColor="@color/black"
+        android:textSize="@dimen/_24ssp"
+        android:textStyle="bold"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/cl_user_info"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="@+id/tv_hello"
+        app:layout_constraintTop_toBottomOf="@+id/tv_hello">
+
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/materialCardView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/cl_container"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:descendantFocusability="beforeDescendants"
+                android:focusable="true"
+                android:focusableInTouchMode="true"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent">
+
+                <de.hdodenhof.circleimageview.CircleImageView
+                    android:id="@+id/iv_profile"
+                    android:layout_width="@dimen/_60sdp"
+                    android:layout_height="@dimen/_60sdp"
+                    android:layout_marginTop="@dimen/_20sdp"
+                    android:src="@mipmap/ic_launcher"
+                    app:civ_border_color="@color/light_gray"
+                    app:civ_border_width="@dimen/_1ssp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/et_full_name"
+                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/_5sdp"
+                    android:layout_marginTop="@dimen/_10sdp"
+                    android:layout_marginEnd="@dimen/_5sdp"
+                    android:hint="@string/full_name"
+                    android:visibility="visible"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/iv_profile">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:imeOptions="actionNext"
+                        android:inputType="text"
+                        android:singleLine="true" />
+                </com.google.android.material.textfield.TextInputLayout>
+
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/et_email"
+                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/_7sdp"
+                    android:hint="@string/email"
+                    android:visibility="visible"
+                    app:layout_constraintEnd_toEndOf="@id/et_full_name"
+                    app:layout_constraintStart_toStartOf="@id/et_full_name"
+                    app:layout_constraintTop_toBottomOf="@+id/et_full_name">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:imeOptions="actionNext"
+                        android:inputType="textEmailAddress"
+                        android:singleLine="true" />
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <androidx.appcompat.widget.AppCompatImageView
+                    android:id="@+id/iv_edit_profile"
+                    android:layout_width="@dimen/_20sdp"
+                    android:layout_height="@dimen/_20sdp"
+                    android:src="@drawable/ic_user"
+                    android:onClick="onClick"
+                    app:layout_constraintBottom_toTopOf="@+id/iv_profile"
+                    app:layout_constraintEnd_toEndOf="@+id/iv_profile"
+                    app:layout_constraintStart_toEndOf="@+id/iv_profile"
+                    app:layout_constraintTop_toTopOf="@+id/iv_profile" />
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+        </com.google.android.material.card.MaterialCardView>
+
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+    <Button
+        android:id="@+id/btn_update"
+        android:layout_width="0dp"
+        android:layout_height="@dimen/_50sdp"
+        android:layout_marginTop="@dimen/_10sdp"
+        android:backgroundTint="@color/black"
+        android:onClick="onClick"
+        android:text="@string/update"
+        android:textColor="@color/white"
+        android:textSize="@dimen/_14ssp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="@+id/cl_user_info"
+        app:layout_constraintTop_toBottomOf="@+id/cl_user_info"
+        tools:ignore="UnusedAttribute" />
+
+
+    <Button
+        android:id="@+id/btn_logout"
+        android:layout_width="0dp"
+        android:layout_height="@dimen/_50sdp"
+        android:backgroundTint="@color/black"
+        android:onClick="onClick"
+        android:text="@string/logout"
+        android:textColor="@color/white"
+        android:textSize="@dimen/_14ssp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="@+id/btn_update"
+        app:layout_constraintTop_toBottomOf="@+id/btn_update"
+        tools:ignore="UnusedAttribute" />
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

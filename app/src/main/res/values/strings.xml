@@ -1,0 +1,56 @@
+<resources>
+    <string name="app_name">Firebase Demo</string>
+    <!-- Strings related to login -->
+    <string name="prompt_email">Email</string>
+    <string name="prompt_password">Password</string>
+    <string name="action_sign_in">Sign in or register</string>
+    <string name="action_sign_in_short">Sign in</string>
+    <string name="welcome">"Welcome !"</string>
+    <string name="invalid_username">Not a valid username</string>
+    <string name="invalid_password">Password must be >5 characters</string>
+
+
+    <!--Login With Google-->
+    <string name="google_client_id">380010137476-883n5vbpqc6ckfiss3offo3p7m7caf9v.apps.googleusercontent.com</string>
+    <string name="google_client_secret">-97sMz6bykpJ6GSH3NhecJyT</string>
+
+
+    <!--Login With Facebook-->
+    <string name="fb_app_id">447734329937682</string>
+    <string name="fb_login_protocol_scheme">fb447734329937682</string>
+    <string name="registration_comma">Registration,</string>
+    <string name="hello_comma">Hello,</string>
+    <string name="signup_hint">Signup to register with us</string>
+    <string name="full_name">Full Name</string>
+    <string name="email">Email</string>
+    <string name="password">Password</string>
+    <string name="repeat_password">Repeat Password</string>
+    <string name="register">Register</string>
+    <string name="log_in">LOG IN</string>
+    <string name="have_an_account">Have an account?</string>
+    <string name="login_comma">Login,</string>
+    <string name="sigin_hint">Sigin to continue</string>
+    <string name="already_registered_with_us">Already registered with us?</string>
+    <string name="sign_up">SIGN UP</string>
+    <string name="error_enter_name">Please enter your name</string>
+    <string name="error_enter_valid_name">Name length be greater than 2 character</string>
+    <string name="error_enter_email">Please enter email</string>
+    <string name="error_enter_valid_email">Please enter valid email</string>
+    <string name="error_enter_password">Please enter password</string>
+    <string name="error_enter_repeat_password">Please repeat your password</string>
+    <string name="error_enter_valid_password">Password length must be greater than 6 character</string>
+    <string name="error_enter_valid_repeat_password">Repeat password not match with password</string>
+    <string name="logout">Logout</string>
+    <string name="already_registered">You are already registered with us</string>
+    <string name="logout_successfully">You are successfully logout</string>
+    <string name="registration_successfully">Registration successfully</string>
+    <string name="registration_canceled">Registration canceled</string>
+    <string name="registration_failed">Registration failed: </string>
+    <string name="login_successfully">Login successfully</string>
+    <string name="login_canceled">Login canceled</string>
+    <string name="login_failed">Login failed:</string>
+    <string name="update">Update</string>
+    <string name="update_successfully">Updated successfully</string>
+    <string name="update_failed">Updated failed:</string>
+
+</resources>
