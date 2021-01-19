@@ -24,6 +24,8 @@
     <string name="full_name">Full Name</string>
     <string name="email">Email</string>
     <string name="password">Password</string>
+    <string name="old_password">Old password</string>
+    <string name="new_password">New password</string>
     <string name="repeat_password">Repeat Password</string>
     <string name="register">Register</string>
     <string name="log_in">LOG IN</string>
@@ -38,7 +40,7 @@
     <string name="error_enter_valid_email">Please enter valid email</string>
     <string name="error_enter_password">Please enter password</string>
     <string name="error_enter_repeat_password">Please repeat your password</string>
-    <string name="error_enter_valid_password">Password length must be greater than 6 character</string>
+    <string name="error_enter_valid_password">Password length must be greater than or equal 6 character</string>
     <string name="error_enter_valid_repeat_password">Repeat password not match with password</string>
     <string name="logout">Logout</string>
     <string name="already_registered">You are already registered with us</string>
@@ -52,5 +54,9 @@
     <string name="update">Update</string>
     <string name="update_successfully">Updated successfully</string>
     <string name="update_failed">Updated failed:</string>
+    <string name="reset_password">Reset Password</string>
+    <string name="reset">Reset</string>
+    <string name="delete_account">Delete Account</string>
+    <string name="delete">Delete</string>
 
 </resources>

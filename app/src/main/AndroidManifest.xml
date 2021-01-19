@@ -4,7 +4,6 @@
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
-
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
 
@@ -12,12 +11,11 @@
         android:name=".AppController"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
-        android:requestLegacyExternalStorage="true"
         android:label="@string/app_name"
+        android:requestLegacyExternalStorage="true"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.RealTimeDB">
-
 
         <meta-data
             android:name="com.facebook.sdk.ApplicationId"
@@ -60,9 +58,15 @@
         <activity
             android:name=".activity.RegistrationActivity"
             android:screenOrientation="portrait" />
-
         <activity
             android:name=".activity.DashboardActivity"
+            android:screenOrientation="portrait" />
+
+        <activity
+            android:name=".activity.ResetPasswordActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".activity.DeleteAccountActivity"
             android:screenOrientation="portrait" />
     </application>
 

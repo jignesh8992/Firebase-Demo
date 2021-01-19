@@ -1,13 +1,14 @@
 package com.firebase.demo
 
 import android.app.Activity
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.View
 import android.widget.Toast
 import com.example.jdrodi.BaseActivity
-import com.example.jdrodi.jprogress.JProgress
+import com.example.jdrodi.utilities.hideKeyboard
 import com.example.jdrodi.utilities.toast
 import com.facebook.CallbackManager
 import com.firebase.demo.activity.DashboardActivity
@@ -28,8 +29,13 @@ class LoginActivity : BaseActivity(), SignInCallback {
 
 
     var callbackManager: CallbackManager? = null
-    private var pDialog: JProgress? = null
     var fAuth: FirebaseAuth? = null
+
+    companion object {
+        fun newIntent(mContext: Context): Intent {
+            return Intent(mContext, LoginActivity::class.java)
+        }
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -59,7 +65,7 @@ class LoginActivity : BaseActivity(), SignInCallback {
 
         fAuth = FirebaseAuth.getInstance()
 
-        pDialog = JProgress.create(this, JProgress.Style.SPIN_INDETERMINATE)
+
         if (isGSignIn()) {
             goProfile(false)
         }
@@ -86,7 +92,7 @@ class LoginActivity : BaseActivity(), SignInCallback {
                 login_btb_fb.performClick()
             }
             tv_signup -> {
-                startActivity(Intent(mContext, RegistrationActivity::class.java))
+                startActivity(RegistrationActivity.newIntent(mContext))
             }
 
             btn_login -> {
@@ -101,13 +107,30 @@ class LoginActivity : BaseActivity(), SignInCallback {
         val password = et_password.editText!!.text.toString().trim()
 
         if (et_email.isValidEmail() && et_password.isValidPassword()) {
-
+            hideKeyboard()
+            jpShow()
             fAuth!!.signInWithEmailAndPassword(email, password).addOnCompleteListener { task ->
+
+                jpDismiss()
+
                 when {
                     task.isSuccessful -> {
-                        toast(getString(R.string.login_successfully))
-                        startActivity(Intent(mContext, DashboardActivity::class.java))
-                        finish()
+                        val currUser = fAuth!!.currentUser
+                        if (currUser != null && currUser.isEmailVerified) {
+                            toast(getString(R.string.login_successfully))
+                            startActivity(DashboardActivity.newIntent(mContext))
+                            finish()
+                        } else if (currUser != null && !currUser.isEmailVerified) {
+                            currUser.sendEmailVerification().addOnCompleteListener { task ->
+                                if (task.isSuccessful) {
+                                    toast("Verification email sent to ")
+                                } else {
+                                    Log.e(TAG, "sendEmailVerification", task.exception)
+                                    toast("Failed to send verification email.")
+                                }
+                            }
+                        }
+
                     }
                     task.isCanceled -> {
                         toast(getString(R.string.login_canceled))
@@ -143,9 +166,7 @@ class LoginActivity : BaseActivity(), SignInCallback {
     }
 
     private fun goProfile(isFb: Boolean) {
-        val intent = Intent(mContext, ProfileActivity::class.java)
-        intent.putExtra("is_fb", isFb)
-        startActivity(intent)
+        startActivity(ProfileActivity.newIntent(mContext, isFb))
     }
 
 }

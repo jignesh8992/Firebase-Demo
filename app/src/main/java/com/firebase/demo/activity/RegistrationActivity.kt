@@ -1,12 +1,14 @@
 package com.firebase.demo.activity
 
 import android.app.Activity
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.View
 import android.widget.Toast
 import com.example.jdrodi.BaseActivity
+import com.example.jdrodi.utilities.hideKeyboard
 import com.example.jdrodi.utilities.toast
 import com.facebook.CallbackManager
 import com.firebase.demo.LoginActivity
@@ -23,6 +25,7 @@ import kotlinx.android.synthetic.main.layout_social_login.*
 import java.util.*
 import kotlin.collections.HashMap
 
+
 private val TAG = RegistrationActivity::class.qualifiedName
 
 class RegistrationActivity : BaseActivity(), SignInCallback {
@@ -31,6 +34,12 @@ class RegistrationActivity : BaseActivity(), SignInCallback {
     private var callbackManager: CallbackManager? = null
     private var fAuth: FirebaseAuth? = null
     private var fStore: FirebaseFirestore? = null
+
+    companion object {
+        fun newIntent(mContext: Context): Intent {
+            return Intent(mContext, RegistrationActivity::class.java)
+        }
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -59,12 +68,27 @@ class RegistrationActivity : BaseActivity(), SignInCallback {
         fAuth = FirebaseAuth.getInstance()
         fStore = FirebaseFirestore.getInstance()
 
-        if (fAuth!!.currentUser != null) {
-            toast(getString(R.string.already_registered))
-            startActivity(Intent(mContext, DashboardActivity::class.java))
-            finish()
-        }
+        val currUser = fAuth!!.currentUser
 
+        if (currUser != null && currUser.isEmailVerified) {
+            toast(getString(R.string.already_registered))
+            startActivity(DashboardActivity.newIntent(mContext))
+            finish()
+        } else if (currUser != null && !currUser.isEmailVerified) {
+
+            hideKeyboard()
+            jpShow()
+
+            currUser.sendEmailVerification().addOnCompleteListener { task ->
+                jpDismiss()
+                if (task.isSuccessful) {
+                    toast("Verification email sent to ")
+                } else {
+                    Log.e(TAG, "sendEmailVerification", task.exception)
+                    toast("Failed to send verification email.")
+                }
+            }
+        }
 
         if (isGSignIn()) {
             goProfile(false)
@@ -108,6 +132,10 @@ class RegistrationActivity : BaseActivity(), SignInCallback {
 
         if (et_full_name.isValidName() && et_email.isValidEmail() && et_password.isValidPassword() && et_repeat_password.isValidRepeatPassword(et_password)) {
 
+            hideKeyboard()
+            jpShow()
+
+
             fAuth!!.createUserWithEmailAndPassword(email, password).addOnCompleteListener { task ->
                 when {
                     task.isSuccessful -> {
@@ -120,9 +148,23 @@ class RegistrationActivity : BaseActivity(), SignInCallback {
                         docRef.set(user).addOnCompleteListener { result ->
                             when {
                                 result.isSuccessful -> {
-                                    toast(getString(R.string.registration_successfully))
-                                    startActivity(Intent(mContext, DashboardActivity::class.java))
-                                    finish()
+
+                                    val currUser = fAuth!!.currentUser
+                                    currUser!!.sendEmailVerification().addOnCompleteListener { task ->
+
+                                        jpDismiss()
+
+                                        if (task.isSuccessful) {
+                                            toast("Verification email sent to ")
+                                        } else {
+                                            Log.e(TAG, "sendEmailVerification", task.exception)
+                                            toast("Failed to send verification email.")
+                                        }
+                                    }
+                                    startActivity(LoginActivity.newIntent(mContext))
+                                    /*    toast(getString(R.string.registration_successfully))
+                                        startActivity(DashboardActivity.newIntent(mContext))
+                                        finish()*/
                                 }
                                 else -> {
                                     toast(getString(R.string.registration_failed) + result.exception.toString())
@@ -132,9 +174,11 @@ class RegistrationActivity : BaseActivity(), SignInCallback {
                         }
                     }
                     task.isCanceled -> {
+                        jpDismiss()
                         toast(getString(R.string.registration_canceled))
                     }
                     else -> {
+                        jpDismiss()
                         toast(getString(R.string.registration_failed) + task.exception.toString())
                         Log.e(TAG, task.exception.toString())
                     }
@@ -170,9 +214,7 @@ class RegistrationActivity : BaseActivity(), SignInCallback {
     }
 
     private fun goProfile(isFb: Boolean) {
-        val intent = Intent(mContext, ProfileActivity::class.java)
-        intent.putExtra("is_fb", isFb)
-        startActivity(intent)
+        startActivity(ProfileActivity.newIntent(mContext, isFb))
     }
 
 }

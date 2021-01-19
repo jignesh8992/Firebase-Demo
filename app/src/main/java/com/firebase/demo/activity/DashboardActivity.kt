@@ -3,18 +3,16 @@ package com.firebase.demo.activity
 import android.Manifest
 import android.app.Activity
 import android.app.ProgressDialog
+import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.util.Log
 import android.view.View
 import com.example.jdrodi.BaseActivity
+import com.example.jdrodi.utilities.*
 import com.example.jdrodi.utilities.ChooserHelper.chooseImage
 import com.example.jdrodi.utilities.FileHelper.getPath
-import com.example.jdrodi.utilities.REQUEST_PHOTO
-import com.example.jdrodi.utilities.loadImage
-import com.example.jdrodi.utilities.showPermissionsAlert
-import com.example.jdrodi.utilities.toast
 import com.firebase.demo.LoginActivity
 import com.firebase.demo.R
 import com.firebase.demo.utilities.*
@@ -48,6 +46,13 @@ class DashboardActivity : BaseActivity() {
     private var fAuth: FirebaseAuth? = null
     private var fStore: FirebaseFirestore? = null
     private var mStorageRef: StorageReference? = null
+
+
+    companion object {
+        fun newIntent(mContext: Context): Intent {
+            return Intent(mContext, DashboardActivity::class.java)
+        }
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -94,7 +99,10 @@ class DashboardActivity : BaseActivity() {
                 toast(error!!.localizedMessage)
             }
         }
+
+
     }
+
 
     override fun onClick(view: View) {
         super.onClick(view)
@@ -105,20 +113,30 @@ class DashboardActivity : BaseActivity() {
                 updateUser()
             }
 
+            btn_reset_password -> {
+                startActivity(ResetPasswordActivity.newIntent(mContext))
+            }
+
             iv_edit_profile -> {
                 checkStoragePermission()
+            }
+            btn_delete -> {
+                startActivity(DeleteAccountActivity.newIntent(mContext))
             }
 
             btn_logout -> {
                 fAuth!!.signOut()
                 toast(getString(R.string.logout_successfully))
-                startActivity(Intent(mContext, LoginActivity::class.java))
+                startActivity(LoginActivity.newIntent(mContext))
                 finish()
             }
         }
     }
 
     private fun updateUser() {
+
+        hideKeyboard()
+        jpShow()
 
         val name = et_full_name.editText!!.text.toString().trim()
         val email = et_email.editText!!.text.toString().trim()
@@ -129,6 +147,7 @@ class DashboardActivity : BaseActivity() {
         user[KEY_EMAIL] = email
         user[KEY_PROFILE] = iv_profile.tag
         docRef.update(user).addOnCompleteListener { result ->
+            jpDismiss()
             when {
                 result.isSuccessful -> {
                     toast(getString(R.string.update_successfully))
@@ -175,25 +194,12 @@ class DashboardActivity : BaseActivity() {
                     pDialog.setTitle("Uploading profile")
                     pDialog.setCancelable(false)
                     pDialog.show()
+
+
                     val userId = fAuth!!.currentUser!!.uid
                     val path = getPath(data!!.data!!)
                     val file: Uri = Uri.fromFile(File(path!!))
                     val imageRef: StorageReference = mStorageRef!!.child("images/$userId")
-
-
-                    /*    val urlTask = imageRef.putFile(file)
-                        urlTask.continueWithTask { task ->
-                            if (!task.isSuccessful) {
-                                throw task.exception!!
-                            }
-                            // Continue with the task to get the download URL
-                            imageRef.downloadUrl
-                        }.addOnCompleteListener { task ->
-                            val downloadUrl = task.result
-                            iv_profile.tag = downloadUrl
-                            loadImage(downloadUrl!!, iv_profile, R.mipmap.ic_launcher_round)
-                            pDialog.dismiss()
-                        }*/
 
                     imageRef.putFile(file)
                         .addOnSuccessListener {
@@ -214,12 +220,6 @@ class DashboardActivity : BaseActivity() {
                             pDialog.setMessage("Progress: ${progress.toInt()}%")
                             Log.i(TAG, "Progress: ${progress.toInt()}%")
 
-                        }.addOnCompleteListener { task ->
-                            /*val downloadUrl = task.result!!.storage.downloadUrl.result
-                            Log.i(TAG, "Image URL : $downloadUrl")
-                            iv_profile.tag = downloadUrl
-                             loadImage(downloadUrl, iv_profile, R.mipmap.ic_launcher_round)
-                            pDialog.dismiss()*/
                         }
 
                 }

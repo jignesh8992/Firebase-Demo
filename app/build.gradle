@@ -53,7 +53,7 @@ dependencies {
     androidTestImplementation 'androidx.test.ext:junit:1.1.2'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.3.0'
     implementation 'androidx.multidex:multidex:2.0.1'
-    implementation 'com.github.jignesh8992:Utilities:2.1'
+    implementation 'com.github.jignesh8992:Utilities:2.2'
 
     // Google Login
     implementation 'com.google.android.gms:play-services-auth:19.0.0'

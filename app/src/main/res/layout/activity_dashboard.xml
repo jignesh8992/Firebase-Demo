@@ -109,8 +109,8 @@
                     android:id="@+id/iv_edit_profile"
                     android:layout_width="@dimen/_20sdp"
                     android:layout_height="@dimen/_20sdp"
-                    android:src="@drawable/ic_user"
                     android:onClick="onClick"
+                    android:src="@drawable/ic_user"
                     app:layout_constraintBottom_toTopOf="@+id/iv_profile"
                     app:layout_constraintEnd_toEndOf="@+id/iv_profile"
                     app:layout_constraintStart_toEndOf="@+id/iv_profile"
@@ -139,6 +139,19 @@
         app:layout_constraintTop_toBottomOf="@+id/cl_user_info"
         tools:ignore="UnusedAttribute" />
 
+    <Button
+        android:id="@+id/btn_reset_password"
+        android:layout_width="0dp"
+        android:layout_height="@dimen/_50sdp"
+        android:backgroundTint="@color/black"
+        android:onClick="onClick"
+        android:text="@string/reset_password"
+        android:textColor="@color/white"
+        android:textSize="@dimen/_14ssp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="@+id/btn_update"
+        app:layout_constraintTop_toBottomOf="@+id/btn_update"
+        tools:ignore="UnusedAttribute" />
 
     <Button
         android:id="@+id/btn_logout"
@@ -150,8 +163,22 @@
         android:textColor="@color/white"
         android:textSize="@dimen/_14ssp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="@+id/btn_update"
-        app:layout_constraintTop_toBottomOf="@+id/btn_update"
+        app:layout_constraintStart_toStartOf="@+id/btn_reset_password"
+        app:layout_constraintTop_toBottomOf="@+id/btn_reset_password"
+        tools:ignore="UnusedAttribute" />
+
+    <Button
+        android:id="@+id/btn_delete"
+        android:layout_width="0dp"
+        android:layout_height="@dimen/_50sdp"
+        android:backgroundTint="@color/black"
+        android:onClick="onClick"
+        android:text="@string/delete_account"
+        android:textColor="@color/white"
+        android:textSize="@dimen/_14ssp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="@+id/btn_logout"
+        app:layout_constraintTop_toBottomOf="@+id/btn_logout"
         tools:ignore="UnusedAttribute" />
 
 

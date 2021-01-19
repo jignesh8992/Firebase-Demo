@@ -1,6 +1,7 @@
 package com.firebase.demo.activity
 
 import android.app.Activity
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.view.View
@@ -24,6 +25,13 @@ class ProfileActivity : BaseActivity(), SignOutCallback {
 
     var isFb = true
 
+    companion object {
+        fun newIntent(mContext: Context, isFb: Boolean): Intent {
+            val intent = Intent(mContext, ProfileActivity::class.java)
+            intent.putExtra("is_fb", isFb)
+            return intent
+        }
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -89,8 +97,7 @@ class ProfileActivity : BaseActivity(), SignOutCallback {
     }
 
     private fun gotoMainActivity() {
-        val intent = Intent(this, LoginActivity::class.java)
-        startActivity(intent)
+        startActivity(LoginActivity.newIntent(mContext))
     }
 
     override fun onSignOut() {
