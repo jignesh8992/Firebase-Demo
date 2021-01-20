@@ -54,8 +54,8 @@ fun LoginButton.setFBCallback(callbackManager: CallbackManager?, fbSignInCallbac
                     val id = `object`.getString("id")
                     val photoUrl = "https://graph.facebook.com/$id/picture?type=normal"
                     val fullName = "$firstName $lastName"
-                    val user = UserProfile(fullName, emailAddress, Uri.parse(photoUrl), id)
-                    fbSignInCallback.onLoginSuccess(true, user)
+                    val user = UserProfile(fullName, emailAddress, Uri.parse(photoUrl), id, getFBAccessToken()!!.token, true)
+                    fbSignInCallback.onLoginSuccess(user)
                 } catch (e: JSONException) {
                     e.printStackTrace()
                     Log.e(TAG, "signInResult: $e")
@@ -90,8 +90,8 @@ fun getFBCallback(fbSignInCallback: SignInCallback) {
             val id = `object`.getString("id")
             val photoUrl = "https://graph.facebook.com/$id/picture?type=normal"
             val fullName = "$firstName $lastName"
-            val user = UserProfile(fullName, emailAddress, Uri.parse(photoUrl), id)
-            fbSignInCallback.onLoginSuccess(true, user)
+            val user = UserProfile(fullName, emailAddress, Uri.parse(photoUrl), id, getFBAccessToken()!!.token, true)
+            fbSignInCallback.onLoginSuccess(user)
         } catch (e: JSONException) {
             e.printStackTrace()
             Log.e(TAG, "signInResult: $e")
@@ -117,7 +117,7 @@ fun Context.printHashKey() {
         for (signature in info.signatures) {
             val md: MessageDigest = MessageDigest.getInstance("SHA")
             md.update(signature.toByteArray())
-            val hashKey: String = String(Base64.encode(md.digest(), 0))
+            val hashKey = String(Base64.encode(md.digest(), 0))
             Log.i(TAG, "Hash Key: $hashKey")
         }
     } catch (e: NoSuchAlgorithmException) {

@@ -55,10 +55,20 @@ dependencies {
     implementation 'androidx.multidex:multidex:2.0.1'
     implementation 'com.github.jignesh8992:Utilities:2.2'
 
+
+
+    // Import the BoM for the Firebase platform
+    implementation platform('com.google.firebase:firebase-bom:26.3.0')
+
+    // Declare the dependency for the Firebase Authentication library
+    // When using the BoM, you don't specify versions in Firebase library dependencies
+    implementation 'com.google.firebase:firebase-auth-ktx'
+
     // Google Login
     implementation 'com.google.android.gms:play-services-auth:19.0.0'
+
     // Facebook SDK
-    implementation 'com.facebook.android:facebook-android-sdk:5.15.3'
+    implementation 'com.facebook.android:facebook-android-sdk:7.1.0'
     // Circle ImageView
     implementation 'de.hdodenhof:circleimageview:3.1.0'
     // Image Loader

@@ -22,6 +22,11 @@
             android:value="@string/fb_app_id" />
 
         <activity
+            android:name="com.facebook.FacebookActivity"
+            android:configChanges="keyboard|keyboardHidden|screenLayout|screenSize|orientation"
+            android:label="@string/app_name" />
+
+        <activity
             android:name=".LoginActivity"
             android:label="@string/app_name"
             android:screenOrientation="portrait">
@@ -31,27 +36,8 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <!--
-  <activity
-              android:name="com.facebook.FacebookActivity"
-              android:configChanges="keyboard|keyboardHidden|screenLayout|screenSize|orientation"
-              android:label="@string/app_name"
-              android:screenOrientation="portrait" />
 
-          <activity
-              android:name="com.facebook.CustomTabActivity"
-              android:exported="true"
-              android:screenOrientation="portrait">
-              <intent-filter>
-                  <action android:name="android.intent.action.VIEW" />
 
-                  <category android:name="android.intent.category.DEFAULT" />
-                  <category android:name="android.intent.category.BROWSABLE" />
-
-                  <data android:scheme="@string/fb_login_protocol_scheme" />
-              </intent-filter>
-          </activity>
-        -->
         <activity
             android:name=".activity.ProfileActivity"
             android:screenOrientation="portrait" />

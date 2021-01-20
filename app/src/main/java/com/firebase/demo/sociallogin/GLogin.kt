@@ -3,6 +3,7 @@ package com.firebase.demo.sociallogin
 import android.app.Activity
 import android.content.Intent
 import android.util.Log
+import com.firebase.demo.R
 import com.firebase.demo.sociallogin.callback.SignInCallback
 import com.firebase.demo.sociallogin.callback.SignOutCallback
 import com.firebase.demo.sociallogin.dao.UserProfile
@@ -14,6 +15,7 @@ import com.google.android.gms.common.api.ApiException
 import com.google.android.gms.tasks.OnCompleteListener
 
 // https://developers.google.com/identity/sign-in/android/start-integrating
+// https://developers.google.com/identity/sign-in/android/backend-auth
 
 
 // Request code
@@ -29,7 +31,9 @@ fun Activity.isGSignIn(): Boolean {
 fun Activity.getGoogleClient(): GoogleSignInClient? {
     // Configure sign-in to request the user's ID, email address, and basic
     // profile. ID and basic profile are included in DEFAULT_SIGN_IN.
-    val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+    val gso = GoogleSignInOptions
+        .Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+        .requestIdToken(getString(R.string.google_client_id))
         .requestEmail()
         .build()
 
@@ -48,13 +52,12 @@ fun gSignInResult(data: Intent, gSignInCallback: SignInCallback) {
         // a listener.
         val completedTask = GoogleSignIn.getSignedInAccountFromIntent(data)
         val account: GoogleSignInAccount? = completedTask!!.getResult(ApiException::class.java)
-
         // Signed in successfully, show authenticated UI.
-
         if (account != null) {
-            Log.i(TAG, "isSuccess")
-            val profile = UserProfile(account.displayName, account.email, account.photoUrl, account.id)
-            gSignInCallback.onLoginSuccess(false,profile)
+            // Google Sign In was successful, authenticate with Firebase
+            Log.i(TAG, "isSuccess: " + account.idToken)
+            val profile = UserProfile(account.displayName, account.email, account.photoUrl, account.id, account.idToken, false)
+            gSignInCallback.onLoginSuccess(profile)
         } else {
             Log.e(TAG, "Sign in with google cancel")
             gSignInCallback.onLoginFailure("Sign in with google cancel")
@@ -73,7 +76,7 @@ fun Activity.getGProfile(): UserProfile? {
     val account = GoogleSignIn.getLastSignedInAccount(this)
     if (account != null) {
         Log.i(TAG, "isSuccess")
-        return UserProfile(account.displayName, account.email, account.photoUrl, account.id)
+        return UserProfile(account.displayName, account.email, account.photoUrl, account.id, account.idToken, false)
     }
     return null
 }

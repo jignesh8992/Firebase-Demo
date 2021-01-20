@@ -47,7 +47,6 @@ class DashboardActivity : BaseActivity() {
     private var fStore: FirebaseFirestore? = null
     private var mStorageRef: StorageReference? = null
 
-
     companion object {
         fun newIntent(mContext: Context): Intent {
             return Intent(mContext, DashboardActivity::class.java)
@@ -72,7 +71,6 @@ class DashboardActivity : BaseActivity() {
     }
 
     override fun initData() {
-
 
         et_email.disableEditText()
         et_full_name.disableEditText()
