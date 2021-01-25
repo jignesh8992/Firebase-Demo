@@ -29,7 +29,7 @@ Firebase Authentication
 </summary>	
 <ul>
  	<li>
-	<a href="https://github.com/jignesh8992/Firebase-Demo/blob/1a4b265e465a5a612f83aeab55a180c36dc6c3be/app/src/main/java/com/firebase/demo/utilities/FirebaseAuthUtil.kt#L84" >
+	<a href="https://github.com/jignesh8992/Firebase-Demo/blob/5f6412c7488ba6bba10f460b5aadf28086b3912f/app/src/main/java/com/firebase/demo/utilities/FirebaseAuthUtil.kt#L238" >
 	Authenticate user with firebase
 	</a> 
 	</li>
