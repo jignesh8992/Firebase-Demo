@@ -92,6 +92,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="@dimen/_7sdp"
                     android:hint="@string/email"
+                    android:enabled="false"
                     android:visibility="visible"
                     app:layout_constraintEnd_toEndOf="@id/et_full_name"
                     app:layout_constraintStart_toStartOf="@id/et_full_name"

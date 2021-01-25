@@ -4,8 +4,8 @@ import android.app.Activity
 import android.content.Intent
 import android.util.Log
 import com.firebase.demo.R
-import com.firebase.demo.sociallogin.callback.SignInCallback
-import com.firebase.demo.sociallogin.callback.SignOutCallback
+import com.firebase.demo.callback.SocialLoginCallback
+import com.firebase.demo.callback.SignOutCallback
 import com.firebase.demo.sociallogin.dao.UserProfile
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
@@ -22,6 +22,7 @@ import com.google.android.gms.tasks.OnCompleteListener
 const val RC_SIGN_IN = 1
 
 private const val TAG = "GLogin"
+
 
 fun Activity.isGSignIn(): Boolean {
     // Check for existing Google Sign In account, if the user is already signed in the GoogleSignInAccount will be non-null.
@@ -46,7 +47,8 @@ fun Activity.gSignIn() {
     startActivityForResult(signInIntent, RC_SIGN_IN)
 }
 
-fun gSignInResult(data: Intent, gSignInCallback: SignInCallback) {
+fun gSignInResult(data: Intent, gSocialLoginCallback: SocialLoginCallback) {
+    Log.i(TAG, "gSignInResult")
     try {
         // The Task returned from this call is always completed, no need to attach
         // a listener.
@@ -57,17 +59,17 @@ fun gSignInResult(data: Intent, gSignInCallback: SignInCallback) {
             // Google Sign In was successful, authenticate with Firebase
             Log.i(TAG, "isSuccess: " + account.idToken)
             val profile = UserProfile(account.displayName, account.email, account.photoUrl, account.id, account.idToken, false)
-            gSignInCallback.onLoginSuccess(profile)
+            gSocialLoginCallback.onSocialLoginSuccess(profile)
         } else {
             Log.e(TAG, "Sign in with google cancel")
-            gSignInCallback.onLoginFailure("Sign in with google cancel")
+            gSocialLoginCallback.onSocialLoginFailure("Sign in with google cancel")
         }
 
 
     } catch (e: ApiException) {
         // The ApiException status code indicates the detailed failure reason.
         // Please refer to the GoogleSignInStatusCodes class reference for more information.
-        Log.e(TAG, "signInResult:failed code=" + e.statusCode)
+        Log.e(TAG, "signInResult:failed code=" + e.statusCode + ": " + e.localizedMessage.toString())
     }
 }
 
@@ -82,10 +84,10 @@ fun Activity.getGProfile(): UserProfile? {
 }
 
 
-fun Activity.gSignOut(signOutCallback: SignOutCallback) {
+fun Activity.gSignOut(signOutCallback: SignOutCallback?) {
     getGoogleClient()!!.signOut()
         .addOnCompleteListener(this) {
-            signOutCallback.onSignOut()
+            signOutCallback?.onSignOut()
         }
 }
 

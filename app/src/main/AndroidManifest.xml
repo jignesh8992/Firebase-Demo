@@ -25,7 +25,6 @@
             android:name="com.facebook.FacebookActivity"
             android:configChanges="keyboard|keyboardHidden|screenLayout|screenSize|orientation"
             android:label="@string/app_name" />
-
         <activity
             android:name=".LoginActivity"
             android:label="@string/app_name"
@@ -36,18 +35,13 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
-
-        <activity
-            android:name=".activity.ProfileActivity"
-            android:screenOrientation="portrait" />
+      
         <activity
             android:name=".activity.RegistrationActivity"
             android:screenOrientation="portrait" />
         <activity
             android:name=".activity.DashboardActivity"
             android:screenOrientation="portrait" />
-
         <activity
             android:name=".activity.ResetPasswordActivity"
             android:screenOrientation="portrait" />

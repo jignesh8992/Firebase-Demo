@@ -11,8 +11,8 @@ import com.facebook.*
 import com.facebook.login.LoginManager
 import com.facebook.login.LoginResult
 import com.facebook.login.widget.LoginButton
-import com.firebase.demo.sociallogin.callback.SignInCallback
-import com.firebase.demo.sociallogin.callback.SignOutCallback
+import com.firebase.demo.callback.SocialLoginCallback
+import com.firebase.demo.callback.SignOutCallback
 import com.firebase.demo.sociallogin.dao.UserProfile
 import org.json.JSONException
 import java.security.MessageDigest
@@ -40,7 +40,7 @@ fun getCallBackManager(): CallbackManager? {
     return CallbackManager.Factory.create()
 }
 
-fun LoginButton.setFBCallback(callbackManager: CallbackManager?, fbSignInCallback: SignInCallback) {
+fun LoginButton.setFBCallback(callbackManager: CallbackManager?, fbSocialLoginCallback: SocialLoginCallback) {
     registerCallback(callbackManager, object : FacebookCallback<LoginResult?> {
         override fun onSuccess(loginResult: LoginResult?) {
             val loggedIn = AccessToken.getCurrentAccessToken() == null
@@ -55,11 +55,11 @@ fun LoginButton.setFBCallback(callbackManager: CallbackManager?, fbSignInCallbac
                     val photoUrl = "https://graph.facebook.com/$id/picture?type=normal"
                     val fullName = "$firstName $lastName"
                     val user = UserProfile(fullName, emailAddress, Uri.parse(photoUrl), id, getFBAccessToken()!!.token, true)
-                    fbSignInCallback.onLoginSuccess(user)
+                    fbSocialLoginCallback.onSocialLoginSuccess(user)
                 } catch (e: JSONException) {
                     e.printStackTrace()
                     Log.e(TAG, "signInResult: $e")
-                    fbSignInCallback.onLoginFailure(e.toString())
+                    fbSocialLoginCallback.onSocialLoginFailure(e.toString())
                 }
             }
             val parameters = Bundle()
@@ -69,18 +69,18 @@ fun LoginButton.setFBCallback(callbackManager: CallbackManager?, fbSignInCallbac
         }
 
         override fun onCancel() {
-            fbSignInCallback.onLoginFailure("Sign in with facebook is cancel")
+            fbSocialLoginCallback.onSocialLoginFailure("Sign in with facebook is cancel")
         }
 
         override fun onError(exception: FacebookException) {
             Log.e(TAG, exception.toString())
-            fbSignInCallback.onLoginFailure(exception.localizedMessage)
+            fbSocialLoginCallback.onSocialLoginFailure(exception.localizedMessage)
         }
     })
 }
 
 
-fun getFBCallback(fbSignInCallback: SignInCallback) {
+fun getFBCallback(fbSocialLoginCallback: SocialLoginCallback) {
     val request = GraphRequest.newMeRequest(getFBAccessToken()) { `object`, _ ->
         Log.d(TAG, `object`.toString())
         try {
@@ -91,11 +91,11 @@ fun getFBCallback(fbSignInCallback: SignInCallback) {
             val photoUrl = "https://graph.facebook.com/$id/picture?type=normal"
             val fullName = "$firstName $lastName"
             val user = UserProfile(fullName, emailAddress, Uri.parse(photoUrl), id, getFBAccessToken()!!.token, true)
-            fbSignInCallback.onLoginSuccess(user)
+            fbSocialLoginCallback.onSocialLoginSuccess(user)
         } catch (e: JSONException) {
             e.printStackTrace()
             Log.e(TAG, "signInResult: $e")
-            fbSignInCallback.onLoginFailure(e.toString())
+            fbSocialLoginCallback.onSocialLoginFailure(e.toString())
         }
     }
     val parameters = Bundle()
@@ -104,11 +104,11 @@ fun getFBCallback(fbSignInCallback: SignInCallback) {
     request.executeAsync()
 }
 
-fun fbSignOut(signOutCallback: SignOutCallback) {
+fun fbSignOut(signOutCallback: SignOutCallback?) {
     if (getFBAccessToken() != null) {
         LoginManager.getInstance().logOut()
     }
-    signOutCallback.onSignOut()
+    signOutCallback?.onSignOut()
 }
 
 fun Context.printHashKey() {

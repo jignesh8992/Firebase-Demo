@@ -60,5 +60,8 @@
     <string name="reset">Reset</string>
     <string name="delete_account">Delete Account</string>
     <string name="delete">Delete</string>
+    <string name="email_sent">Verification email sent to registered email. Please verify your email</string>
+    <string name="forgot_password">Forgot password?</string>
+    <string name="session_expired">Session Expired. Please try again</string>
 
 </resources>

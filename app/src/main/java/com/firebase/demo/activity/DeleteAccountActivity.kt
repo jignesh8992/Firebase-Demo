@@ -4,22 +4,24 @@ import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import com.example.jdrodi.BaseActivity
 import com.example.jdrodi.utilities.hideKeyboard
 import com.example.jdrodi.utilities.toast
 import com.firebase.demo.LoginActivity
 import com.firebase.demo.R
+import com.firebase.demo.callback.DeleteCallback
+import com.firebase.demo.callback.UserReAuthenticateCallback
 import com.firebase.demo.utilities.*
-import com.google.firebase.auth.EmailAuthProvider
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.android.synthetic.main.activity_delete_account.*
+import kotlinx.android.synthetic.main.activity_delete_account.iv_back
+import kotlinx.android.synthetic.main.activity_reset_password.*
 
 private val TAG = DeleteAccountActivity::class.qualifiedName
 
-class DeleteAccountActivity : BaseActivity() {
+class DeleteAccountActivity : BaseActivity(), UserReAuthenticateCallback, DeleteCallback {
 
     private var fAuth: FirebaseAuth? = null
     private var fStore: FirebaseFirestore? = null
@@ -66,55 +68,37 @@ class DeleteAccountActivity : BaseActivity() {
     }
 
     private fun deleteAccount() {
-        val password = et_password.editText!!.text.toString().trim()
+        val oldPassword = et_password.editText!!.text.toString().trim()
         if (et_password.isValidPassword()) {
-
             hideKeyboard()
-
             jpShow()
-
-            val currUser = fAuth!!.currentUser
-            val userId = fAuth!!.currentUser!!.uid
-            val credentials = EmailAuthProvider.getCredential(currUser!!.email!!, password)
-            currUser.reauthenticate(credentials).addOnCompleteListener { task ->
-                when {
-                    task.isSuccessful -> {
-
-                        currUser.delete().addOnCompleteListener { delete ->
-                            jpDismiss()
-                            when {
-                                delete.isSuccessful -> {
-                                    val docRef = fStore!!.collection(COLLECTION_USER).document(userId)
-                                    docRef.delete().addOnCompleteListener { result ->
-                                        when {
-                                            result.isSuccessful -> {
-                                                toast("Account deleted successfully")
-                                                startActivity(LoginActivity.newIntent(mContext))
-                                            }
-                                            else -> {
-                                                toast("Delete account failed 1:" + result.exception.toString())
-                                                Log.e(TAG, "Delete account failed 1:" + result.exception.toString())
-                                            }
-                                        }
-                                    }
-
-                                }
-                                else -> {
-                                    toast("Delete account failed 2: ${delete.exception!!.localizedMessage}")
-                                    Log.e(TAG, "Delete account failed 2: ${delete.exception!!.localizedMessage}")
-                                }
-                            }
-                        }
-                    }
-                    else -> {
-                        jpDismiss()
-                        toast("Delete account failed 3: ${task.exception!!.localizedMessage}")
-                        Log.e(TAG, "Delete account failed 3: ${task.exception!!.localizedMessage}")
-                    }
-                }
-            }
+            reAuthenticateUser(oldPassword, this)
         }
     }
+
+    // [START UserReAuthenticate_callback]
+    override fun onUserReAuthenticateSuccess() {
+        deleteDocument(this)
+    }
+
+    override fun onUserReAuthenticateFailure(errorMessage: String) {
+        jpDismiss()
+        toast(errorMessage)
+    }
+    // [END UserReAuthenticate_callback]
+
+    // [START Delete_callback]
+    override fun onDeleteDocumentSuccess() {
+        jpDismiss()
+        toast("Account deleted successfully")
+        startActivity(LoginActivity.newIntent(mContext))
+    }
+
+    override fun onDeleteDocumentFailure(errorMessage: String) {
+        jpDismiss()
+        toast(errorMessage)
+    }
+    // [END Delete_callback]
 }
 
 

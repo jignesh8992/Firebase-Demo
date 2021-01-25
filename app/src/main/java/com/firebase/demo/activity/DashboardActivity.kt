@@ -15,6 +15,15 @@ import com.example.jdrodi.utilities.ChooserHelper.chooseImage
 import com.example.jdrodi.utilities.FileHelper.getPath
 import com.firebase.demo.LoginActivity
 import com.firebase.demo.R
+import com.firebase.demo.callback.GetDocumentCallback
+import com.firebase.demo.callback.PasswordResetCallback
+import com.firebase.demo.callback.StorageUploadCallback
+import com.firebase.demo.callback.UpdateDocumentCallback
+import com.firebase.demo.sociallogin.dao.User
+import com.firebase.demo.sociallogin.fbSignOut
+import com.firebase.demo.sociallogin.gSignOut
+import com.firebase.demo.sociallogin.isFBSignIn
+import com.firebase.demo.sociallogin.isGSignIn
 import com.firebase.demo.utilities.*
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
@@ -29,9 +38,7 @@ import kotlinx.android.synthetic.main.activity_dashboard.*
 import kotlinx.android.synthetic.main.activity_dashboard.et_email
 import kotlinx.android.synthetic.main.activity_dashboard.et_full_name
 import kotlinx.android.synthetic.main.activity_registration.*
-import java.io.File
 import java.util.*
-import kotlin.collections.HashMap
 
 
 private val TAG = DashboardActivity::class.qualifiedName
@@ -41,7 +48,7 @@ private var storagePermission = arrayOf(
     Manifest.permission.WRITE_EXTERNAL_STORAGE
 )
 
-class DashboardActivity : BaseActivity() {
+class DashboardActivity : BaseActivity(), GetDocumentCallback, PasswordResetCallback {
 
     private var fAuth: FirebaseAuth? = null
     private var fStore: FirebaseFirestore? = null
@@ -49,7 +56,9 @@ class DashboardActivity : BaseActivity() {
 
     companion object {
         fun newIntent(mContext: Context): Intent {
-            return Intent(mContext, DashboardActivity::class.java)
+            val intent = Intent(mContext, DashboardActivity::class.java)
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK)
+            return intent
         }
     }
 
@@ -79,25 +88,15 @@ class DashboardActivity : BaseActivity() {
         fAuth = FirebaseAuth.getInstance()
         mStorageRef = FirebaseStorage.getInstance().reference
 
-        if (fAuth!!.currentUser != null) {
-            et_email.editText!!.setText(fAuth!!.currentUser!!.email)
+
+        val fProvider = getProvider()
+        if (fProvider != PROVIDER_PASSWORD) {
+            btn_delete.visibility = View.GONE
         }
 
-        val userId = fAuth!!.currentUser!!.uid
-        val docRef = fStore!!.collection(COLLECTION_USER).document(userId)
-        docRef.addSnapshotListener(mContext) { value, error ->
-            if (value != null) {
-                et_full_name.editText!!.setText(value.getString(KEY_NAME))
 
-                val path = value.getString(KEY_PROFILE)
-                iv_profile.tag = path
-                loadImage(path!!, iv_profile, R.mipmap.ic_launcher_round)
-
-            } else {
-                toast(error!!.localizedMessage)
-            }
-        }
-
+        jpShow()
+        getDocument(this)
 
     }
 
@@ -112,7 +111,13 @@ class DashboardActivity : BaseActivity() {
             }
 
             btn_reset_password -> {
-                startActivity(ResetPasswordActivity.newIntent(mContext))
+                val fProvider = getProvider()
+                if (fProvider != PROVIDER_PASSWORD) {
+                    jpShow()
+                    sendPasswordResetEmail(this)
+                } else {
+                    startActivity(ResetPasswordActivity.newIntent(mContext))
+                }
             }
 
             iv_edit_profile -> {
@@ -124,6 +129,12 @@ class DashboardActivity : BaseActivity() {
 
             btn_logout -> {
                 fAuth!!.signOut()
+                if (isFBSignIn()) {
+                    fbSignOut(null)
+                }
+                if (isGSignIn()) {
+                    gSignOut(null)
+                }
                 toast(getString(R.string.logout_successfully))
                 startActivity(LoginActivity.newIntent(mContext))
                 finish()
@@ -132,29 +143,23 @@ class DashboardActivity : BaseActivity() {
     }
 
     private fun updateUser() {
-
         hideKeyboard()
         jpShow()
-
         val name = et_full_name.editText!!.text.toString().trim()
         val email = et_email.editText!!.text.toString().trim()
-        val userId = fAuth!!.currentUser!!.uid
-        val docRef = fStore!!.collection(COLLECTION_USER).document(userId)
-        val user: HashMap<String, Any> = HashMap()
-        user[KEY_NAME] = name
-        user[KEY_EMAIL] = email
-        user[KEY_PROFILE] = iv_profile.tag
-        docRef.update(user).addOnCompleteListener { result ->
-            jpDismiss()
-            when {
-                result.isSuccessful -> {
-                    toast(getString(R.string.update_successfully))
-                }
-                else -> {
-                    toast(getString(R.string.update_failed) + result.exception.toString())
-                }
+        val profile = iv_profile.tag.toString()
+        val user = User(name, email, profile)
+        updateDocument(user, object : UpdateDocumentCallback {
+            override fun onUpdateDocumentSuccess() {
+                jpDismiss()
+                toast(getString(R.string.update_successfully))
             }
-        }
+
+            override fun onUpdateDocumentFailure(errorMessage: String) {
+                jpDismiss()
+                toast(errorMessage)
+            }
+        })
     }
 
     private fun checkStoragePermission() {
@@ -187,49 +192,71 @@ class DashboardActivity : BaseActivity() {
         if (requestCode == REQUEST_PHOTO) {
             when (resultCode) {
                 RESULT_OK -> {
-
-                    val pDialog = ProgressDialog(mContext)
-                    pDialog.setTitle("Uploading profile")
-                    pDialog.setCancelable(false)
-                    pDialog.show()
-
-
-                    val userId = fAuth!!.currentUser!!.uid
-                    val path = getPath(data!!.data!!)
-                    val file: Uri = Uri.fromFile(File(path!!))
-                    val imageRef: StorageReference = mStorageRef!!.child("images/$userId")
-
-                    imageRef.putFile(file)
-                        .addOnSuccessListener {
-                            imageRef.downloadUrl.addOnSuccessListener { uri ->
-                                val downloadUrl = uri.toString()
-                                iv_profile.tag = downloadUrl
-                                Log.i(TAG, "Image URL : $downloadUrl")
-                                loadImage(downloadUrl, iv_profile, R.mipmap.ic_launcher_round)
-                                pDialog.dismiss()
-                            }
-                        }
-                        .addOnFailureListener { error ->
-                            pDialog.dismiss()
-                            toast("Error occurred! : ${error.localizedMessage}")
-                            Log.e(TAG, "Error occurred! : ${error.localizedMessage}")
-                        }.addOnProgressListener { taskSnapshot ->
-                            val progress: Double = 100.0 * taskSnapshot.bytesTransferred / taskSnapshot.totalByteCount
-                            pDialog.setMessage("Progress: ${progress.toInt()}%")
-                            Log.i(TAG, "Progress: ${progress.toInt()}%")
-
-                        }
-
+                    uploadFileOnFirebase(data!!.data!!)
                 }
                 RESULT_CANCELED -> {
-
+                    toast("Image choose cancelled by user")
                 }
                 else -> {
-
+                    toast("Something went wrong")
                 }
             }
         }
     }
 
+    private fun uploadFileOnFirebase(uri: Uri) {
+        val pDialog = ProgressDialog(mContext)
+        pDialog.setTitle("Uploading profile")
+        pDialog.setCancelable(false)
+        pDialog.show()
+        val path = getPath(uri)
+        uploadFile(path!!, object : StorageUploadCallback {
+            override fun onUploadSuccess(downloadUrl: String) {
+                jpDismiss()
+                iv_profile.tag = downloadUrl
+                Log.i(TAG, "Image URL : $downloadUrl")
+                loadImage(downloadUrl, iv_profile, R.mipmap.ic_launcher_round)
+                pDialog.dismiss()
+            }
+
+            override fun onUploadFailure(errorMessage: String) {
+                jpDismiss()
+                toast(errorMessage)
+            }
+
+            override fun onUploadProgress(progress: Int) {
+                pDialog.setMessage("Progress: ${progress.toInt()}%")
+            }
+        })
+    }
+
+    // [START GetDocument_callback]
+    override fun onGetDocumentSuccess(use: User) {
+        et_full_name.editText!!.setText(use.displayName)
+        et_email.editText!!.setText(use.email)
+        val path = use.photoUrl
+        iv_profile.tag = path
+        loadImage(path!!, iv_profile, R.mipmap.ic_launcher_round)
+
+        jpDismiss()
+    }
+
+    override fun onGetDocumentFailure(errorMessage: String) {
+        jpDismiss()
+        toast(errorMessage)
+    }
+    // [END GetDocument_callback]
+
+    // [START PasswordReset_callback]
+    override fun onPasswordResetSuccess() {
+        jpDismiss()
+        toast("A link to change the password has been sent to the registered email id")
+    }
+
+    override fun onPasswordResetFailure(errorMessage: String) {
+        jpDismiss()
+        toast(errorMessage)
+    }
+    // [END PasswordReset_callback]
 
 }

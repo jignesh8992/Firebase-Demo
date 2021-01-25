@@ -10,17 +10,19 @@ import com.example.jdrodi.BaseActivity
 import com.example.jdrodi.utilities.hideKeyboard
 import com.example.jdrodi.utilities.toast
 import com.firebase.demo.R
+import com.firebase.demo.callback.PasswordResetCallback
+import com.firebase.demo.callback.UpdatePasswordCallback
+import com.firebase.demo.callback.UserReAuthenticateCallback
 import com.firebase.demo.utilities.isValidPassword
-import com.google.firebase.auth.EmailAuthProvider
-import com.google.firebase.auth.FirebaseAuth
+import com.firebase.demo.utilities.reAuthenticateUser
+import com.firebase.demo.utilities.sendPasswordResetEmail
+import com.firebase.demo.utilities.updatePassword
 import kotlinx.android.synthetic.main.activity_login.*
 import kotlinx.android.synthetic.main.activity_reset_password.*
 
 private val TAG = ResetPasswordActivity::class.qualifiedName
 
-class ResetPasswordActivity : BaseActivity() {
-
-    private var fAuth: FirebaseAuth? = null
+class ResetPasswordActivity : BaseActivity(), UserReAuthenticateCallback, UpdatePasswordCallback {
 
     companion object {
         fun newIntent(mContext: Context): Intent {
@@ -46,16 +48,17 @@ class ResetPasswordActivity : BaseActivity() {
     }
 
     override fun initData() {
-        fAuth = FirebaseAuth.getInstance()
 
-
-        fAuth!!.sendPasswordResetEmail(fAuth!!.currentUser!!.email!!)
-            .addOnCompleteListener { task ->
-                if (task.isSuccessful) {
-                    Log.d(TAG, "Email sent.")
-                    toast("A link to change the password has been sent to the registered email id")
-                }
+        sendPasswordResetEmail(object : PasswordResetCallback {
+            override fun onPasswordResetSuccess() {
+                Log.d(TAG, "Email sent.")
+                toast("A link to change the password has been sent to the registered email id")
             }
+
+            override fun onPasswordResetFailure(errorMessage: String) {
+
+            }
+        })
     }
 
     override fun onClick(view: View) {
@@ -73,41 +76,40 @@ class ResetPasswordActivity : BaseActivity() {
 
     private fun resetPassword() {
         val oldPassword = et_old_password.editText!!.text.toString().trim()
-        val newPassword = et_new_password.editText!!.text.toString().trim()
         if (et_old_password.isValidPassword() && et_new_password.isValidPassword()) {
-
             hideKeyboard()
-
             jpShow()
-
-            val currUser = fAuth!!.currentUser
-            val credentials = EmailAuthProvider.getCredential(currUser!!.email!!, oldPassword)
-            currUser.reauthenticate(credentials).addOnCompleteListener { task ->
-                when {
-                    task.isSuccessful -> {
-                        currUser.updatePassword(newPassword).addOnCompleteListener { task ->
-                            jpDismiss()
-                            when {
-                                task.isSuccessful -> {
-                                    toast("Password changes successfully")
-                                }
-                                else -> {
-                                    toast("Password change failed: ${task.exception!!.localizedMessage}")
-                                }
-                            }
-                        }
-                    }
-                    else -> {
-                        jpDismiss()
-                        toast("Password change failed: ${task.exception!!.localizedMessage}")
-                    }
-                }
-            }
+            reAuthenticateUser(oldPassword, this)
         } else {
             et_old_password.isValidPassword()
             et_new_password.isValidPassword()
         }
     }
+
+    // [START UserReAuthenticate_callback]
+    override fun onUserReAuthenticateSuccess() {
+        val newPassword = et_new_password.editText!!.text.toString().trim()
+        updatePassword(newPassword, this)
+    }
+
+    override fun onUserReAuthenticateFailure(errorMessage: String) {
+        jpDismiss()
+        toast(errorMessage)
+    }
+    // [END UserReAuthenticate_callback]
+
+
+    // [START UpdatePassword_callback]
+    override fun onUpdatePasswordSuccess() {
+        toast("Password changes successfully")
+        jpDismiss()
+    }
+
+    override fun onUpdatePasswordFailure(errorMessage: String) {
+        jpDismiss()
+        toast(errorMessage)
+    }
+    // [END UpdatePassword_callback]
 }
 
 

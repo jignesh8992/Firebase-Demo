@@ -9,10 +9,10 @@ open class AppController : Application() {
 
     override fun onCreate() {
         super.onCreate()
-        if(FacebookSdk.isInitialized()){
-            Log.i("TAG","Already_initialized")
-        }else{
-            Log.i("TAG","Not_initialized")
+        if (FacebookSdk.isInitialized()) {
+            Log.i("TAG", "Already_initialized")
+        } else {
+            Log.i("TAG", "Not_initialized")
             FacebookSdk.fullyInitialize()
         }
 
