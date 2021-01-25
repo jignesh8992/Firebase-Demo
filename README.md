@@ -1,6 +1,24 @@
 # Firebase-Demo
 <img src="https://badges.frapsoft.com/os/v1/open-source.svg?v=103">
-Demo of several firebase products
+
+### Products to be coverd in this demo:
+
+<details>
+ 
+<summary>
+<a href="https://github.com/jignesh8992/Firebase-Demo/blob/master/app/src/main/java/com/firebase/demo/utilities/FirebaseAuthUtil.kt">
+Firebase Authentication
+</a>
+</summary>	
+<ul>
+ 	<li>
+	<a href="https://github.com/jignesh8992/Firebase-Demo/blob/master/app/src/main/java/com/firebase/demo/utilities/FirebaseAuthUtil.kt" >
+	Authenticate user with firebase
+	</a> 
+	</li>
+</ul>
+ 
+</details>
 
 ## Contributing
 Feel free to contribute code to Firebase-Demo. You can do it by forking the repository via Github and sending pull request with changes.
