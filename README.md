@@ -1,6 +1,38 @@
 # Firebase-Demo
 <img src="https://badges.frapsoft.com/os/v1/open-source.svg?v=103">
-Demo of several firebase products
+
+### Products to be coverd in this demo:
+
+<details> 
+<summary>
+<a href="https://github.com/jignesh8992/Firebase-Demo/blob/master/app/src/main/java/com/firebase/demo/utilities/FirebaseAuthUtil.kt">
+Firebase Authentication
+</a>
+</summary>	
+<ul>
+ 	<li>
+	<a href="https://github.com/jignesh8992/Firebase-Demo/blob/1a4b265e465a5a612f83aeab55a180c36dc6c3be/app/src/main/java/com/firebase/demo/utilities/FirebaseAuthUtil.kt#L84" >
+	Authenticate user with firebase
+	</a> 
+	</li>
+</ul> 
+</details>
+
+
+<details> 
+<summary>
+<a href="https://github.com/jignesh8992/Firebase-Demo/blob/master/app/src/main/java/com/firebase/demo/utilities/FirebaseFirestoreUtils.kt">
+Cloud Firestore
+</a>
+</summary>	
+<ul>
+ 	<li>
+	<a href="https://github.com/jignesh8992/Firebase-Demo/blob/1a4b265e465a5a612f83aeab55a180c36dc6c3be/app/src/main/java/com/firebase/demo/utilities/FirebaseFirestoreUtils.kt#L42" >
+	Check if document already exist
+	</a> 
+	</li>
+</ul> 
+</details>
 
 ## Contributing
 Feel free to contribute code to Firebase-Demo. You can do it by forking the repository via Github and sending pull request with changes.
