@@ -3,6 +3,24 @@
 
 ### Products to be coverd in this demo:
 
+
+<details> 
+<summary>
+<a href="https://github.com/jignesh8992/Firebase-Demo/blob/master/app/src/main/java/com/firebase/demo/sociallogin/GLogin.kt">
+Login with google
+</a>
+</summary>	
+</details>
+
+<details> 
+<summary>
+<a href="https://github.com/jignesh8992/Firebase-Demo/blob/master/app/src/main/java/com/firebase/demo/sociallogin/FBLogin.kt">
+Login with facebook
+</a>
+</summary>	
+</details>
+
+
 <details> 
 <summary>
 <a href="https://github.com/jignesh8992/Firebase-Demo/blob/master/app/src/main/java/com/firebase/demo/utilities/FirebaseAuthUtil.kt">
@@ -29,6 +47,21 @@ Cloud Firestore
  	<li>
 	<a href="https://github.com/jignesh8992/Firebase-Demo/blob/1a4b265e465a5a612f83aeab55a180c36dc6c3be/app/src/main/java/com/firebase/demo/utilities/FirebaseFirestoreUtils.kt#L42" >
 	Check if document already exist
+	</a> 
+	</li>
+</ul> 
+</details>
+
+<details> 
+<summary>
+<a href="https://github.com/jignesh8992/Firebase-Demo/blob/master/app/src/main/java/com/firebase/demo/utilities/FirebaseStorage.kt">
+Storage
+</a>
+</summary>	
+<ul>
+ 	<li>
+	<a href="" >
+	Upload file to the firebase storage
 	</a> 
 	</li>
 </ul> 
